@@ -38,7 +38,7 @@ median(total_step)
 
 ## What is the average daily activity pattern?
 `means_activity` is a variable to store average date of steps for each interval.
-First number in output is time interval in format HMM, second number is ordinal number of this 5-minute interval throughtout of day.
+Output is time interval in format HMM
 
 ```r
 means_activity <-colMeans(mmm,na.rm = TRUE)
@@ -66,7 +66,7 @@ summary(raw_data$steps)[7]
 ## 2304
 ```
 A strategy for filling in all of the missing values in the dataset:
-I use mean for that 5-minute interval or 0 if NA.
+I use mean for that 5-minute interval or 0 if NA. This values was found on previous step and store in `means_activity`
 
 ```r
 new_mmm<-mmm
@@ -95,3 +95,36 @@ median(total_step_new)
 ## [1] 10766.19
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```r
+sortWeekdays <- function(day){
+  retv <- 0
+  day <- as.Date(day)
+  day<- weekdays(day)
+  if (day %in% c("Monday","Tuesday","Wednesday","Thursday","Friday")) {
+    retv<-"Weekday"
+  }
+  if (day %in% c("Sunday","Saturday")) {
+    retv<-"Weekend"
+  }
+  retv
+} 
+
+#week_factor<- factor(sapply(as.vector(dimnames(new_mmm)[1]),sortWeekdays))
+
+weekdy <- dates
+for ( i in 1:length(weekdy)) {
+  weekdy[i] <- sortWeekdays(weekdy[i])
+  }
+means_activity_wd <-colMeans(new_mmm[weekdy == "Weekday",],na.rm = TRUE)
+plot(dimnames(new_mmm)[[2]],means_activity_wd,type = 'l',xlab = "time interval", main = "average activity weekday", ylab = 'number of step')
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+```r
+means_activity_we <-colMeans(new_mmm[weekdy == "Weekend",],na.rm = TRUE)
+plot(dimnames(new_mmm)[[2]],means_activity_we,type = 'l',xlab = "time interval", main = "average activity weekend", ylab = 'number of step')
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-2.png) 

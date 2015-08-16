@@ -50,3 +50,29 @@ mean(total_step_new)
 median(total_step_new)
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+sortWeekdays <- function(day){
+  retv <- 0
+  day <- as.Date(day)
+  day<- weekdays(day)
+  if (day %in% c("Monday","Tuesday","Wednesday","Thursday","Friday")) {
+    retv<-"Weekday"
+  }
+  if (day %in% c("Sunday","Saturday")) {
+    retv<-"Weekend"
+  }
+  retv
+} 
+
+#week_factor<- factor(sapply(as.vector(dimnames(new_mmm)[1]),sortWeekdays))
+
+weekdy <- dates
+for ( i in 1:length(weekdy)) {
+  weekdy[i] <- sortWeekdays(weekdy[i])
+  }
+means_activity_wd <-colMeans(new_mmm[weekdy == "Weekday",],na.rm = TRUE)
+plot(dimnames(new_mmm)[[2]],means_activity_wd,type = 'l',xlab = "time interval", main = "average activity weekday", ylab = 'number of step')
+means_activity_we <-colMeans(new_mmm[weekdy == "Weekend",],na.rm = TRUE)
+plot(dimnames(new_mmm)[[2]],means_activity_we,type = 'l',xlab = "time interval", main = "average activity weekend", ylab = 'number of step')
+
+```
